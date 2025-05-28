@@ -4,148 +4,166 @@
 #define MAX_CONTAS 100
 
 typedef struct {
-    int numero;
-    char nome[50];
+    int numeroConta;
+    char nome[100];
     char cpf[15];
     char telefone[15];
     float saldo;
 } Conta;
 
-int procurar_conta(Conta contas[MAX_CONTAS], int numero, int total_contas) {
-    if (total_contas == 0) return -1;
-    for (int i = 0; i < total_contas; i++) {
-        if (contas[i].numero == numero) return i;
+void buscarConta(Conta cadastro[], int numeroConta, int* posicao) {
+    for (int i = 0; i < MAX_CONTAS; i++) {
+        if (cadastro[i].numeroConta == numeroConta) {
+            *posicao = i;
+            return;
+        }
     }
-    return -2;
+    *posicao = -2;
 }
 
-void adicionar_conta(Conta contas[MAX_CONTAS], int *total_contas, int numero) {
-    if (procurar_conta(contas, numero, *total_contas) != -2) {
+void cadastrarConta(Conta cadastro[], int* numContas, int numeroConta) {
+    int posicao;
+    buscarConta(cadastro, numeroConta, &posicao);
+    
+    if (posicao != -2) {
         printf("Número de conta já cadastrado.\n");
         return;
     }
+    
+    if (*numContas >= MAX_CONTAS) {
+        printf("Limite de contas atingido.\n");
+        return;
+    }
 
-    if (*total_contas < MAX_CONTAS) {
-        Conta nova;
-        nova.numero = numero;
-        
-        printf("Nome do titular: ");
-        getchar();
-        fgets(nova.nome, sizeof(nova.nome), stdin);
-        nova.nome[strcspn(nova.nome, "\n")] = 0;
+    Conta novaConta;
+    novaConta.numeroConta = numeroConta;
+    printf("Digite o nome do titular: ");
+    scanf(" %[^\n]s", novaConta.nome);
+    printf("Digite o CPF do titular: ");
+    scanf(" %s", novaConta.cpf);
+    printf("Digite o telefone do titular: ");
+    scanf(" %s", novaConta.telefone);
+    novaConta.saldo = 0.0;
 
-        printf("CPF do titular: ");
-        fgets(nova.cpf, sizeof(nova.cpf), stdin);
-        nova.cpf[strcspn(nova.cpf, "\n")] = 0;
+    cadastro[*numContas] = novaConta;
+    (*numContas)++;
+    printf("Conta cadastrada com sucesso.\n");
+}
 
-        printf("Telefone do titular: ");
-        fgets(nova.telefone, sizeof(nova.telefone), stdin);
-        nova.telefone[strcspn(nova.telefone, "\n")] = 0;
-
-        nova.saldo = 0.0f;
-
-        contas[*total_contas] = nova;
-        (*total_contas)++;
-        printf("Conta cadastrada com sucesso!\n");
+void consultarSaldo(Conta cadastro[], int numContas, int numeroConta) {
+    int posicao;
+    buscarConta(cadastro, numeroConta, &posicao);
+    
+    if (posicao == -2) {
+        printf("Conta não cadastrada.\n");
     } else {
-        printf("Não é possível adicionar mais contas.\n");
+        printf("Saldo da conta %d: %.2f\n", cadastro[posicao].numeroConta, cadastro[posicao].saldo);
     }
 }
 
-void exibir_saldo(Conta contas[MAX_CONTAS], int total_contas, int numero) {
-    int idx = procurar_conta(contas, numero, total_contas);
-    if (idx >= 0) {
-        printf("Saldo da conta %d: R$ %.2f\n", numero, contas[idx].saldo);
+void deposito(Conta cadastro[], int numContas, int numeroConta) {
+    int posicao;
+    buscarConta(cadastro, numeroConta, &posicao);
+    
+    if (posicao == -2) {
+        printf("Conta não cadastrada.\n");
+        return;
+    }
+    
+    float valor;
+    printf("Digite o valor do depósito: ");
+    scanf("%f", &valor);
+    
+    if (valor > 0) {
+        cadastro[posicao].saldo += valor;
+        printf("Depósito efetuado com sucesso.\n");
     } else {
-        printf("Conta não encontrada.\n");
+        printf("Valor inválido para depósito.\n");
     }
 }
 
-void realizar_deposito(Conta contas[MAX_CONTAS], int total_contas, int numero) {
-    int idx = procurar_conta(contas, numero, total_contas);
-    if (idx >= 0) {
-        float valor;
-        printf("Digite o valor do depósito: ");
-        scanf("%f", &valor);
-        contas[idx].saldo += valor;
-        printf("Depósito realizado.\n");
+void saque(Conta cadastro[], int numContas, int numeroConta) {
+    int posicao;
+    buscarConta(cadastro, numeroConta, &posicao);
+    
+    if (posicao == -2) {
+        printf("Conta não cadastrada.\n");
+        return;
+    }
+    
+    float valor;
+    printf("Digite o valor do saque: ");
+    scanf("%f", &valor);
+    
+    if (valor <= 0) {
+        printf("Valor inválido para saque.\n");
+    } else if (cadastro[posicao].saldo >= valor) {
+        cadastro[posicao].saldo -= valor;
+        printf("Saque efetuado com sucesso.\n");
     } else {
-        printf("Conta não localizada.\n");
+        printf("Saldo insuficiente.\n");
     }
 }
 
-void realizar_saque(Conta contas[MAX_CONTAS], int total_contas, int numero) {
-    int idx = procurar_conta(contas, numero, total_contas);
-    if (idx >= 0) {
-        float valor;
-        printf("Digite o valor do saque: ");
-        scanf("%f", &valor);
-        if (contas[idx].saldo >= valor) {
-            contas[idx].saldo -= valor;
-            printf("Saque realizado.\n");
-        } else {
-            printf("Saldo insuficiente.\n");
-        }
-    } else {
-        printf("Conta não encontrada.\n");
-    }
-}
-
-void listar_contas(Conta contas[MAX_CONTAS], int total_contas) {
-    if (total_contas == 0) {
+void exibirContas(Conta cadastro[], int numContas) {
+    if (numContas == 0) {
         printf("Nenhuma conta cadastrada.\n");
         return;
     }
-    for (int i = 0; i < total_contas; i++) {
-        printf("Conta %d - Titular: %s, Telefone: %s\n", contas[i].numero, contas[i].nome, contas[i].telefone);
+
+    for (int i = 0; i < numContas; i++) {
+        printf("Número da conta: %d\n", cadastro[i].numeroConta);
+        printf("Nome: %s\n", cadastro[i].nome);
+        printf("Telefone: %s\n", cadastro[i].telefone);
+        printf("-------------------------\n");
     }
 }
 
 int main() {
-    Conta contas[MAX_CONTAS];
-    int total_contas = 0;
-    int opcao, numero_conta;
+    Conta cadastro[MAX_CONTAS];
+    int numContas = 0;
+    int opcao, numeroConta;
 
     while (1) {
-        printf("\nBanco Dinheiro Certo\n");
-        printf("1. Cadastrar nova conta\n");
-        printf("2. Consultar saldo\n");
-        printf("3. Realizar depósito\n");
-        printf("4. Realizar saque\n");
-        printf("5. Listar todas as contas\n");
-        printf("6. Sair\n");
+        printf("Menu:\n");
+        printf("1 - Cadastrar conta\n");
+        printf("2 - Consultar saldo\n");
+        printf("3 - Fazer depósito\n");
+        printf("4 - Fazer saque\n");
+        printf("5 - Exibir todas as contas\n");
+        printf("6 - Sair\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
             case 1:
                 printf("Digite o número da nova conta: ");
-                scanf("%d", &numero_conta);
-                adicionar_conta(contas, &total_contas, numero_conta);
+                scanf("%d", &numeroConta);
+                cadastrarConta(cadastro, &numContas, numeroConta);
                 break;
             case 2:
-                printf("Digite o número da conta para consultar saldo: ");
-                scanf("%d", &numero_conta);
-                exibir_saldo(contas, total_contas, numero_conta);
+                printf("Digite o número da conta para consultar o saldo: ");
+                scanf("%d", &numeroConta);
+                consultarSaldo(cadastro, numContas, numeroConta);
                 break;
             case 3:
-                printf("Digite o número da conta para depósito: ");
-                scanf("%d", &numero_conta);
-                realizar_deposito(contas, total_contas, numero_conta);
+                printf("Digite o número da conta para fazer o depósito: ");
+                scanf("%d", &numeroConta);
+                deposito(cadastro, numContas, numeroConta);
                 break;
             case 4:
-                printf("Digite o número da conta para saque: ");
-                scanf("%d", &numero_conta);
-                realizar_saque(contas, total_contas, numero_conta);
+                printf("Digite o número da conta para fazer o saque: ");
+                scanf("%d", &numeroConta);
+                saque(cadastro, numContas, numeroConta);
                 break;
             case 5:
-                listar_contas(contas, total_contas);
+                exibirContas(cadastro, numContas);
                 break;
             case 6:
-                printf("Saindo do programa...\n");
+                printf("Saindo...\n");
                 return 0;
             default:
-                printf("Opção inválida. Tente novamente.\n");
+                printf("Opção inválida.\n");
         }
     }
 
