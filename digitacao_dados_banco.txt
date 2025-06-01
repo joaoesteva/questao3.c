@@ -1,0 +1,103 @@
+Contas cadastradas
+1001
+Ana Clara
+12345678900
+81999990000
+1002
+Bruno Silva
+23456789011
+81988887777
+1003
+Carlos Mendes
+34567890122
+81977776666
+1004
+Daniela Souza
+45678901233
+81966665555
+1005
+Eduardo Lima
+56789012344
+81955554444
+
+Depósitos Realizados
+1001
+Ana Clara
+12345678900
+81999990000
+1002
+Bruno Silva
+23456789011
+81988887777
+1003
+Carlos Mendes
+34567890122
+81977776666
+1004
+Daniela Souza
+45678901233
+81966665555
+1005
+Eduardo Lima
+56789012344
+81955554444
+
+Saques realizados:
+Conta: 1001
+Depósito: 500.00
+
+Conta: 1002
+Depósito: 300.00
+
+Conta: 1003
+Depósito: 1000.00
+
+Conta: 1004
+Depósito: 150.00
+
+Conta: 1005
+Depósito: 50.00
+
+Conta: 1001
+Saque: 100.00
+
+Conta: 1002
+Saque: 50.00
+
+Conta: 1003
+Saque: 500.00
+
+Conta: 1004
+Saque: 200.00   -> Resultado: Saldo insuficiente
+
+Conta: 1005
+Saque: 25.00
+
+Consultas de saldo:
+Conta: 1001 -> Saldo: 400.00
+Conta: 1002 -> Saldo: 250.00
+Conta: 1003 -> Saldo: 500.00
+Conta: 1004 -> Saldo: 150.00
+Conta: 1005 -> Saldo: 25.00
+
+Exibir contas:
+Número da conta: 1001
+Nome: Ana Clara
+Telefone: 81999990000
+-------------------------
+Número da conta: 1002
+Nome: Bruno Silva
+Telefone: 81988887777
+-------------------------
+Número da conta: 1003
+Nome: Carlos Mendes
+Telefone: 81977776666
+-------------------------
+Número da conta: 1004
+Nome: Daniela Souza
+Telefone: 81966665555
+-------------------------
+Número da conta: 1005
+Nome: Eduardo Lima
+Telefone: 81955554444
+-------------------------
